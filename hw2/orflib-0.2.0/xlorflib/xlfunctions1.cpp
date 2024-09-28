@@ -166,4 +166,58 @@ LPXLFOPER EXCEL_EXPORT xlOrfEuroBS(LPXLFOPER xlPayoffType,
   EXCEL_END;
 }
 
+LPXLFOPER EXCEL_EXPORT xlOrfKOFwd(LPXLFOPER xlSpot,
+                                  LPXLFOPER xlStrike,
+                                  LPXLFOPER xlKOLevel,
+                                  LPXLFOPER xlTimeToExp,
+                                  LPXLFOPER xlTimeToKO,
+                                  LPXLFOPER xlIntRate,
+                                  LPXLFOPER xlDivYield,
+                                  LPXLFOPER xlVolatility)
+{
+  EXCEL_BEGIN;
+  if (XlfExcel::Instance().IsCalledByFuncWiz())
+    return XlfOper(true);
+
+  double spot = XlfOper(xlSpot).AsDouble();
+  double strike = XlfOper(xlStrike).AsDouble();
+  double KOLevel = XlfOper(xlKOLevel).AsDouble();
+  double timeToExp = XlfOper(xlTimeToExp).AsDouble();
+  double timeToKO = XlfOper(xlTimeToKO).AsDouble();
+  double intRate = XlfOper(xlIntRate).AsDouble();
+  double divYield = XlfOper(xlDivYield).AsDouble();
+  double vol = XlfOper(xlVolatility).AsDouble();
+
+  double price = knockoutFwd(spot, strike, KOLevel, timeToExp, timeToKO,
+                             intRate, divYield, vol);
+  return XlfOper(price);
+  EXCEL_END;
+}
+
+LPXLFOPER EXCEL_EXPORT xlOrfSqEuroBS(LPXLFOPER xlPayoffType,
+                                     LPXLFOPER xlSpot,
+                                     LPXLFOPER xlTimeToExp,
+                                     LPXLFOPER xlStrike,
+                                     LPXLFOPER xlIntRate,
+                                     LPXLFOPER xlDivYield,
+                                     LPXLFOPER xlVolatility)
+{
+  EXCEL_BEGIN;
+  if (XlfExcel::Instance().IsCalledByFuncWiz())
+    return XlfOper(true);
+
+  int payoffType = XlfOper(xlPayoffType).AsInt();
+  double spot = XlfOper(xlSpot).AsDouble();
+  double timeToExp = XlfOper(xlTimeToExp).AsDouble();
+  double strike = XlfOper(xlStrike).AsDouble();
+  double intRate = XlfOper(xlIntRate).AsDouble();
+  double divYield = XlfOper(xlDivYield).AsDouble();
+  double vol = XlfOper(xlVolatility).AsDouble();
+
+  double price = squaredOptionBS(payoffType, spot, timeToExp, strike, intRate, divYield, vol);
+
+  return XlfOper(price);
+  EXCEL_END;
+}
+
 END_EXTERN_C

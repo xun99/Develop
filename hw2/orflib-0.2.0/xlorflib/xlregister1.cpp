@@ -81,4 +81,35 @@ namespace {
     "Price of a European option in the Black-Scholes model.",
     "ORFLIB", OrfEuroBSArgs, 8);
 
+  // Register the function ORF.KOFWD
+  XLRegistration::Arg knockoutFwdArgs[] = {
+    { "Spot", "spot", "XLF_OPER" },
+    { "Strike", "strike", "XLF_OPER" },
+    { "KOLevel", "knockout level", "XLF_OPER"},
+    { "TimeToExp", "time to expiration", "XLF_OPER" },
+    { "TimeToKO", "time to knock out", "XLF_OPER" },
+    { "IntRate", "risk-free interest rate (cont. cmpd)", "XLF_OPER" },
+    { "DivYield", "dividend yield (cont. cmpd)", "XLF_OPER" },
+    { "Vol", "volatility", "XLF_OPER" },
+  };
+  XLRegistration::XLFunctionRegistrationHelper regOrfKOFwd(
+    "xlOrfKOFwd", "ORF.KOFWD",
+    "Price of a knockout forward.",
+    "ORFLIB", knockoutFwdArgs, 8);
+
+  // Register the function ORF.SQEUROBS
+  XLRegistration::Arg OrfSqEuroBSArgs[] = {
+    { "PayoffType", "1: call; -1: put", "XLF_OPER" },
+    { "Spot", "spot", "XLF_OPER" },
+    { "TimeToExp", "time to expiration", "XLF_OPER" },
+    { "Strike", "strike", "XLF_OPER" },
+    { "IntRate", "risk-free rate (cont. cmpd)", "XLF_OPER" },
+    { "DivYield", "dividend yield (cont. cmpd)", "XLF_OPER" },
+    { "Vol", "volatility", "XLF_OPER" },
+  };
+  XLRegistration::XLFunctionRegistrationHelper OrfSqEuroBS(
+    "xlOrfSqEuroBS", "ORF.SQEUROBS",
+    "Price of a squared option.",
+    "ORFLIB", OrfSqEuroBSArgs, 7);
+
 }
