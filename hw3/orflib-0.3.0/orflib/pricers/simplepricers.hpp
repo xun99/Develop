@@ -8,6 +8,7 @@
 
 #include <orflib/defines.hpp>
 #include <orflib/exception.hpp>
+#include <orflib/math/matrix.hpp>
 
 
 BEGIN_NAMESPACE(orf)
@@ -16,11 +17,11 @@ BEGIN_NAMESPACE(orf)
 double fwdPrice(double spot, double timeToExp, double intRate, double divYield);
 
 /** Price of a European digital option in the Black-Scholes model*/
-double digitalOptionBS(int payoffType, double spot, double strike, double timeToExp,
+orf::Vector digitalOptionBS(int payoffType, double spot, double strike, double timeToExp,
                        double intRate, double divYield, double volatility);
 
 /** Price of a European option in the Black-Scholes model*/
-double europeanOptionBS(int payoffType, double spot, double strike, double timeToExp, 
+orf::Vector europeanOptionBS(int payoffType, double spot, double strike, double timeToExp,
                         double intRate, double divYield, double volatility);
 
 END_NAMESPACE(orf)

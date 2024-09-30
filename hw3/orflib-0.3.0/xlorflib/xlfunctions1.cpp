@@ -7,6 +7,7 @@
 #include <orflib/math/stats/errorfunction.hpp>
 #include <orflib/math/stats/normaldistribution.hpp>
 #include <orflib/pricers/simplepricers.hpp>
+#include <xlorflib/xlutils.hpp>
 
 #include <xlw/xlw.h>
 
@@ -100,7 +101,8 @@ LPXLFOPER EXCEL_EXPORT xlOrfDigiBS(LPXLFOPER xlPayoffType,
                                    LPXLFOPER xlTimeToExp,
                                    LPXLFOPER xlIntRate,
                                    LPXLFOPER xlDivYield,
-                                   LPXLFOPER xlVolatility)
+                                   LPXLFOPER xlVolatility,
+                                   LPXLFOPER xlHeaders)
 {
   EXCEL_BEGIN;
 
@@ -115,9 +117,34 @@ LPXLFOPER EXCEL_EXPORT xlOrfDigiBS(LPXLFOPER xlPayoffType,
   double divYield = XlfOper(xlDivYield).AsDouble();
   double vol = XlfOper(xlVolatility).AsDouble();
 
-  double price = digitalOptionBS(payoffType, spot, strike, timeToExp, intRate, divYield, vol);
+  // handling the xlHeaders argument 
+  bool headers;
+  if (XlfOper(xlHeaders).IsMissing() || XlfOper(xlHeaders).IsNil())
+    headers = false;
+  else
+    headers = XlfOper(xlHeaders).AsBool();
 
-  return XlfOper(price);
+  orf::Vector res = digitalOptionBS(payoffType, spot, strike, timeToExp, intRate, divYield, vol);
+
+  RW offset = headers ? 1 : 0;
+  XlfOper xlRet(1 + offset, 5); // construct as a 2x5 or 1x5 range     
+  if (headers) {
+    xlRet(0, 0) = "Price";
+    xlRet(0, 1) = "Delta";
+    xlRet(0, 2) = "Gamma";
+    xlRet(0, 3) = "Theta";
+    xlRet(0, 4) = "Vega";
+    for (int i = 0; i < 5; ++i) {
+      xlRet(1, i) = res(i);
+    }
+  }
+  else {
+    for (int i = 0; i < 5; ++i) {
+      xlRet(0, i) = res(i);  
+    }
+  }
+
+  return xlRet;
   EXCEL_END;
 }
 
@@ -149,19 +176,27 @@ LPXLFOPER EXCEL_EXPORT xlOrfEuroBS(LPXLFOPER xlPayoffType,
   else
     headers = XlfOper(xlHeaders).AsBool();
 
-  double price = europeanOptionBS(payoffType, spot, strike, timeToExp,
+  orf::Vector res = europeanOptionBS(payoffType, spot, strike, timeToExp,
     intRate, divYield, vol);
 
   RW offset = headers ? 1 : 0;
-
-  XlfOper xlRet(1 + offset, 1); // construct as a 2x1 or 1x1 range     
+  XlfOper xlRet(1 + offset, 5); // construct as a 2x5 or 1x5 range     
   if (headers) {
     xlRet(0, 0) = "Price";
-    xlRet(1, 0) = price;
+    xlRet(0, 1) = "Delta";
+    xlRet(0, 2) = "Gamma";
+    xlRet(0, 3) = "Theta";
+    xlRet(0, 4) = "Vega";
+    for (int i = 0; i < 5; ++i) {
+      xlRet(1, i) = res(i);
+    }
   }
   else {
-    xlRet(0, 0) = price;
+    for (int i = 0; i < 5; ++i) {
+      xlRet(0, i) = res(i);
+    }
   }
+
   return xlRet;
   EXCEL_END;
 }

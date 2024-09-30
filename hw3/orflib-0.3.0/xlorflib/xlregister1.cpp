@@ -59,11 +59,12 @@ namespace {
     { "TimeToExp", "time to expiration", "XLF_OPER" },
     { "IntRate", "risk-free interest rate (cont. cmpd.)", "XLF_OPER" },
     { "DivYield", "dividend yield (cont. cmpd.)", "XLF_OPER" },
-    { "Vol", "volatility", "XLF_OPER" }
+    { "Vol", "volatility", "XLF_OPER" },
+    { "Headers", "TRUE for displaying the header. Default: FALSE", "XLF_OPER" }
   };
   XLRegistration::XLFunctionRegistrationHelper regOrfDigiBS(
     "xlOrfDigiBS", "ORF.DIGIBS", "Price of a digital option in the Black-Scholes model.",
-    "ORFLIB", OrfDigiBSArgs, 7);
+    "ORFLIB", OrfDigiBSArgs, 8);
 
   // Register the function ORF.EUROBS
   XLRegistration::Arg OrfEuroBSArgs[] = {
