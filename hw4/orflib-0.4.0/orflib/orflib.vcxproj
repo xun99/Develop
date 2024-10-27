@@ -163,6 +163,7 @@
     <ClInclude Include="defines.hpp" />
     <ClInclude Include="exception.hpp" />
     <ClInclude Include="market\market.hpp" />
+    <ClInclude Include="market\volatilitytermstructure.hpp" />
     <ClInclude Include="market\yieldcurve.hpp" />
     <ClInclude Include="math\interpol\piecewisepolynomial.hpp" />
     <ClInclude Include="math\matrix.hpp" />
@@ -176,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="market\market.cpp" />
+    <ClCompile Include="market\volatilitytermstructure.cpp" />
     <ClCompile Include="market\yieldcurve.cpp" />
     <ClCompile Include="math\interpol\piecewisepolynomial.cpp" />
     <ClCompile Include="math\stats\errorfunction.cpp" />

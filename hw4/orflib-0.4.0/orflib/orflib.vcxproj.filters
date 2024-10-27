@@ -16,6 +16,9 @@
     <ClCompile Include="market\yieldcurve.cpp">
       <Filter>market</Filter>
     </ClCompile>
+    <ClCompile Include="market\volatilitytermstructure.cpp">
+      <Filter>market</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="defines.hpp" />
@@ -47,6 +50,9 @@
     </ClInclude>
     <ClInclude Include="sptrmap.hpp" />
     <ClInclude Include="utils.hpp" />
+    <ClInclude Include="market\volatilitytermstructure.hpp">
+      <Filter>market</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="math">

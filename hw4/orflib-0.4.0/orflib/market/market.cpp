@@ -17,6 +17,7 @@ Market& Market::instance()
 void Market::clear()
 {
   ycmap_.clear();
+  volmap_.clear();
 }
 
 // The helper function

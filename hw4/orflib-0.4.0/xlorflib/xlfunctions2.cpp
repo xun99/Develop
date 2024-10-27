@@ -22,7 +22,8 @@ LPXLFOPER EXCEL_EXPORT xlOrfMktList()
     return XlfOper(true);
 
   std::vector<std::string> ycnames = market().yieldCurves().list();
-  RW nrows = (RW)(1 + ycnames.size());
+  std::vector<std::string> volnames = market().volatilities().list();
+  RW nrows = (RW)(1 + std::max(ycnames.size(), volnames.size()));
 
   XlfOper xlRet(nrows, 2);
   xlRet(0, 0) = "YieldCurves";
@@ -33,6 +34,10 @@ LPXLFOPER EXCEL_EXPORT xlOrfMktList()
   }
   for (RW i = 0; i < (RW)ycnames.size(); ++i)
     xlRet(i + 1, 0) = ycnames[i];
+  for (RW i = 0; i < (RW)volnames.size(); ++i) {
+    xlRet(i + 1, 1) = volnames[i];
+  }
+
 
   return xlRet;
   EXCEL_END;
@@ -175,5 +180,83 @@ LPXLFOPER EXCEL_EXPORT xlOrfFwdRate(LPXLFOPER xlCrvName,
   EXCEL_END;
 }
 
+
+LPXLFOPER EXCEL_EXPORT xlOrfVolCreate(LPXLFOPER xlName,
+                                      LPXLFOPER xlMatRange,
+                                      LPXLFOPER xlVolRange,
+                                      LPXLFOPER xlValType)
+{
+  EXCEL_BEGIN;
+
+  if (XlfExcel::Instance().IsCalledByFuncWiz())
+    return XlfOper(true);
+
+  std::string name = XlfOper(xlName).AsString();
+  Vector tmats = xlOperToVector(XlfOper(xlMatRange));
+  Vector vols = xlOperToVector(XlfOper(xlVolRange));
+
+  int valtype = XlfOper(xlValType).AsInt();
+  VolatilityTermStructure::VolType vtype;
+  switch (valtype) {
+  case 0:
+    vtype = VolatilityTermStructure::VolType::SPOTVOL;
+    break;
+  case 1:
+    vtype = VolatilityTermStructure::VolType::FWDVOL;
+    break;
+  default:
+    ORF_ASSERT(0, "error: unknown volatility term structure volatility type");
+  }
+
+  std::pair<std::string, unsigned long> pr =
+    market().volatilities().set(name,
+      std::make_shared<VolatilityTermStructure>(tmats.begin(), tmats.end(), vols.begin(), vols.end(), vtype)
+    );
+
+  std::string tag = xlAddTick(pr.first);
+  tag += std::to_string(pr.second);
+  return XlfOper(tag);
+  EXCEL_END;
+}
+
+LPXLFOPER EXCEL_EXPORT xlOrfSpotVol(LPXLFOPER xlName,
+                                    LPXLFOPER xlMat)
+{
+  EXCEL_BEGIN;
+
+  if (XlfExcel::Instance().IsCalledByFuncWiz())
+    return XlfOper(true);
+
+  std::string name = xlStripTick(XlfOper(xlName).AsString());
+  double tmat = XlfOper(xlMat).AsDouble();
+
+  std::shared_ptr<VolatilityTermStructure> spvts = market().volatilities().get(name);
+  ORF_ASSERT(spvts, "error: volatility term structure " + name + " not found");
+
+  double svol = spvts->spotVol(tmat);
+  return XlfOper(svol);
+  EXCEL_END;
+}
+
+LPXLFOPER EXCEL_EXPORT xlOrfFwdVol(LPXLFOPER xlName,
+                                   LPXLFOPER xlMat1,
+                                   LPXLFOPER xlMat2)
+{
+  EXCEL_BEGIN;
+
+  if (XlfExcel::Instance().IsCalledByFuncWiz())
+    return XlfOper(true);
+
+  std::string name = xlStripTick(XlfOper(xlName).AsString());
+  double T1 = XlfOper(xlMat1).AsDouble();
+  double T2 = XlfOper(xlMat2).AsDouble();
+
+  std::shared_ptr<VolatilityTermStructure> spvts = market().volatilities().get(name);
+  ORF_ASSERT(spvts, "error: volatility term structure " + name + " not found");
+
+  double fvol = spvts->fwdVol(T1, T2);
+  return XlfOper(fvol);
+  EXCEL_END;
+}
 
 END_EXTERN_C

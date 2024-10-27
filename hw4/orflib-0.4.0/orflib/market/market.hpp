@@ -10,6 +10,7 @@
 #include <orflib/exception.hpp>
 #include <orflib/sptrmap.hpp>
 #include <orflib/market/yieldcurve.hpp>
+#include <orflib/market/volatilitytermstructure.hpp>
 
 BEGIN_NAMESPACE(orf)
 
@@ -26,6 +27,10 @@ public:
   /** Returns the yield curves map */
   SPtrMap<YieldCurve>& yieldCurves() { return ycmap_; }
 
+  /** Returns the volatility term structure map */
+  SPtrMap<VolatilityTermStructure>& volatilities() { return volmap_; }
+
+
 private:
 
   /** allow private default ctor */
@@ -39,6 +44,7 @@ private:
 
   // state
   SPtrMap<YieldCurve> ycmap_;
+  SPtrMap<VolatilityTermStructure> volmap_;
 };
 
 /** Free function returning the market singleton */
